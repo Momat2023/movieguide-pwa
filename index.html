@@ -17,6 +17,7 @@
           <button id="homeBtn">🏠 Accueil</button>
           <button id="searchBtn">🔍 Rechercher</button>
           <button id="watchlistBtn">📋 Ma Liste</button>
+	  <button id="watchedBtn">✅ Vus (<span id="watchedCount">0</span>)</button>
 	  <button id="badgesBtn">🏆 Badges <span id="badgeCount">0/15</span></button>
 	  <div id="streakDisplay">🔥 0</div>
           <button id="authBtn">👤 Connexion</button>
@@ -39,6 +40,21 @@
         <h2>📋 Ma Watchlist (<span id="watchlistCount">0</span>)</h2>
         <div id="watchlistGrid" class="grid"></div>
       </section>
+
+      <!-- NOUVEAU: Section Films Vus -->
+<section id="watched-section" style="display:none;">
+  <div class="watched-header">
+    <h2>✅ Films Vus (<span id="watchedCountTitle">0</span>)</h2>
+    <div class="watched-filters">
+      <button id="filterAll" class="filter-btn active">Tous</button>
+      <button id="filterMovies" class="filter-btn">Films</button>
+      <button id="filterSeries" class="filter-btn">Séries</button>
+      <button id="sortRecent" class="filter-btn">Plus récents</button>
+      <button id="sortRating" class="filter-btn">Meilleurs notes</button>
+    </div>
+  </div>
+  <div id="watchedGrid" class="grid"></div>
+</section>
       
       <section id="badges-section" style="display:none;">
  	 <div id="badgesContent"></div>
