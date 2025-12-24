@@ -1092,3 +1092,329 @@ section h2 {
     max-width: none;
   }
 }
+
+/* CineMatch Swipe System */
+.swipe-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  position: relative;
+  min-height: 70vh;
+}
+
+.swipe-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.swipe-header h2 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.swipe-stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.7);
+}
+
+.swipe-card-container {
+  position: relative;
+  width: 100%;
+  height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1000px;
+}
+
+.swipe-card {
+  position: absolute;
+  width: 90%;
+  max-width: 400px;
+  height: 550px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.1s ease-out;
+  border: 3px solid rgba(255,255,255,0.1);
+}
+
+.swipe-card.grabbing {
+  cursor: grabbing;
+}
+
+.swipe-card.swipe-left {
+  animation: swipeLeft 0.3s ease-out forwards;
+}
+
+.swipe-card.swipe-right {
+  animation: swipeRight 0.3s ease-out forwards;
+}
+
+@keyframes swipeLeft {
+  to {
+    transform: translateX(-150%) rotate(-30deg);
+    opacity: 0;
+  }
+}
+
+@keyframes swipeRight {
+  to {
+    transform: translateX(150%) rotate(30deg);
+    opacity: 0;
+  }
+}
+
+.swipe-card-image {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+}
+
+.swipe-card-info {
+  padding: 1.5rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.swipe-card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.swipe-card-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.swipe-card-genres {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+
+.genre-tag {
+  background: rgba(102, 126, 234, 0.3);
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  border: 1px solid rgba(102, 126, 234, 0.5);
+}
+
+.swipe-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 8rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  text-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.swipe-card.tilting-left .swipe-overlay.dislike,
+.swipe-card.tilting-right .swipe-overlay.like {
+  opacity: 0.7;
+}
+
+.swipe-actions {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin-top: 2rem;
+}
+
+.swipe-button {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+.swipe-button.dislike {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+.swipe-button.like {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.swipe-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.swipe-button:active {
+  transform: scale(0.95);
+}
+
+.swipe-profile {
+  background: rgba(255,255,255,0.05);
+  padding: 2rem;
+  border-radius: 20px;
+  margin: 2rem 0;
+  border: 2px solid rgba(102, 126, 234, 0.3);
+}
+
+.profile-personality {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.profile-personality-emoji {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+}
+
+.profile-personality-type {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.profile-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.profile-stat {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+}
+
+.profile-stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #f5576c;
+}
+
+.profile-stat-label {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.7);
+  margin-top: 0.5rem;
+}
+
+.profile-genres {
+  margin-top: 2rem;
+}
+
+.profile-genres h4 {
+  margin-bottom: 1rem;
+}
+
+.profile-genre-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile-genre-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profile-genre-bar {
+  flex: 1;
+  height: 30px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+}
+
+.profile-genre-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 10px;
+  font-weight: 600;
+  transition: width 0.5s ease;
+}
+
+.swipe-recommendations {
+  margin-top: 3rem;
+}
+
+.swipe-recommendations h3 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.no-more-cards {
+  text-align: center;
+  padding: 3rem;
+}
+
+.no-more-cards-icon {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+}
+
+.swipe-start {
+  text-align: center;
+  padding: 3rem;
+}
+
+.swipe-start-icon {
+  font-size: 6rem;
+  margin-bottom: 1rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+@media (max-width: 768px) {
+  .swipe-card-container {
+    height: 500px;
+  }
+  
+  .swipe-card {
+    height: 450px;
+  }
+  
+  .swipe-card-image {
+    height: 300px;
+  }
+  
+  .swipe-actions {
+    gap: 2rem;
+  }
+  
+  .swipe-button {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+  
+  .profile-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

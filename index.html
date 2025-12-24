@@ -16,8 +16,9 @@
         <div class="nav-buttons">
           <button id="homeBtn">🏠 Accueil</button>
 	  <button id="quizBtn" style="background:linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🎭 Mood Quiz</button>
-          <button id="searchBtn">🔍 Rechercher</button>
-          <button id="watchlistBtn">📋 Ma Liste</button>
+	  <button id="swipeBtn" style="background:linear-gradient(135deg, #f5576c 0%, #f093fb 100%);">💕 CineMatch</button>
+      <button id="searchBtn">🔍 Rechercher</button>
+      <button id="watchlistBtn">📋 Ma Liste</button>
 	  <button id="watchedBtn">✅ Vus (<span id="watchedCount">0</span>)</button>
 	  <button id="badgesBtn">🏆 Badges <span id="badgeCount">0/15</span></button>
 	  <button id="notificationSettingsBtn" onclick="showNotificationSettings()">🔔</button>
@@ -56,6 +57,9 @@
     </div>
   </div>
   <div id="watchedGrid" class="grid"></div>
+</section>
+<section id="swipe-section" style="display:none;">
+  <div id="swipeContainer" class="swipe-container"></div>
 </section>
 
 <!-- NOUVEAU: Section Mood Quiz -->
