@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Votre guide personnel de films et séries">
+  <meta name="theme-color" content="#1a1a2e">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <title>CineTrack - Guide Films & Séries</title>
+</head>
+<body>
+  <div id="app">
+    <header>
+      <nav>
+        <h1>🎬 CineTrack</h1>
+        <div class="nav-buttons">
+          <button id="homeBtn">🏠 Accueil</button>
+          <button id="searchBtn">🔍 Rechercher</button>
+          <button id="watchlistBtn">📋 Ma Liste</button>
+          <button id="authBtn">👤 Connexion</button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section id="home-section">
+        <h2>🔥 Tendances de la semaine</h2>
+        <div id="trendingGrid" class="grid"></div>
+      </section>
+
+      <section id="search-section" style="display:none;">
+        <input type="text" id="searchInput" placeholder="Rechercher un film ou série...">
+        <div id="searchResults" class="grid"></div>
+      </section>
+
+      <section id="watchlist-section" style="display:none;">
+        <h2>📋 Ma Watchlist (<span id="watchlistCount">0</span>)</h2>
+        <div id="watchlistGrid" class="grid"></div>
+      </section>
+    </main>
+
+    <div id="modal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="modalBody"></div>
+      </div>
+    </div>
+
+    <div id="installPrompt" style="display:none; position:fixed; bottom:20px; right:20px; background:#667eea; padding:1rem; border-radius:10px; box-shadow:0 5px 20px rgba(0,0,0,0.3);">
+      <p style="margin-bottom:0.5rem;">📱 Installer CineTrack ?</p>
+      <button id="installBtn" style="margin-right:0.5rem;">Installer</button>
+      <button id="dismissBtn">Plus tard</button>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
+

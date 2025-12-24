@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<canvas id="c" width="512" height="512"></canvas>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+ctx.fillStyle = '#1a1a2e';
+ctx.fillRect(0, 0, 512, 512);
+ctx.font = 'bold 300px Arial';
+ctx.textAlign = 'center';
+ctx.textBaseline = 'middle';
+ctx.fillText('🎬', 256, 256);
+canvas.toBlob(blob => {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'icon.png';
+  a.click();
+  document.body.innerHTML = '<h1>✅ icon.png téléchargé! Placez-le dans /public</h1>';
+});
+</script>
+</body>
+</html>
