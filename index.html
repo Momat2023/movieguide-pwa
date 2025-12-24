@@ -17,6 +17,8 @@
           <button id="homeBtn">🏠 Accueil</button>
           <button id="searchBtn">🔍 Rechercher</button>
           <button id="watchlistBtn">📋 Ma Liste</button>
+	  <button id="badgesBtn">🏆 Badges <span id="badgeCount">0/15</span></button>
+	  <div id="streakDisplay">🔥 0</div>
           <button id="authBtn">👤 Connexion</button>
         </div>
       </nav>
@@ -37,6 +39,11 @@
         <h2>📋 Ma Watchlist (<span id="watchlistCount">0</span>)</h2>
         <div id="watchlistGrid" class="grid"></div>
       </section>
+      
+      <section id="badges-section" style="display:none;">
+ 	 <div id="badgesContent"></div>
+      </section>
+
     </main>
 
     <div id="modal" class="modal" style="display:none;">

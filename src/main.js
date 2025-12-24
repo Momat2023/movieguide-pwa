@@ -1,6 +1,7 @@
 import './style.css'
 import { auth, loginWithGoogle, logout } from './firebase.js'
 import { onAuthStateChanged } from 'firebase/auth'
+import { GamificationManager } from './gamification.js'
 
 const API_KEY = '904812e78d331be964b64b4e270697ed';
 const BASE_URL = 'https://api.themoviedb.org/3';
@@ -10,11 +11,17 @@ let watchlist = JSON.parse(localStorage.getItem('watchlist')) || [];
 let deferredPrompt;
 let currentUser = null;
 
+// Initialiser le système de gamification
+const gamification = new GamificationManager();
+
 // PWA Install Prompt
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  document.getElementById('installPrompt').style.display = 'block';
+  const installPrompt = document.getElementById('installPrompt');
+  if (installPrompt) {
+    installPrompt.style.display = 'block';
+  }
 });
 
 document.getElementById('installBtn')?.addEventListener('click', async () => {
@@ -23,12 +30,18 @@ document.getElementById('installBtn')?.addEventListener('click', async () => {
     const { outcome } = await deferredPrompt.userChoice;
     console.log(`User response: ${outcome}`);
     deferredPrompt = null;
-    document.getElementById('installPrompt').style.display = 'none';
+    const installPrompt = document.getElementById('installPrompt');
+    if (installPrompt) {
+      installPrompt.style.display = 'none';
+    }
   }
 });
 
 document.getElementById('dismissBtn')?.addEventListener('click', () => {
-  document.getElementById('installPrompt').style.display = 'none';
+  const installPrompt = document.getElementById('installPrompt');
+  if (installPrompt) {
+    installPrompt.style.display = 'none';
+  }
 });
 
 // Auth State
@@ -74,6 +87,11 @@ document.getElementById('searchBtn').addEventListener('click', () => {
 document.getElementById('watchlistBtn').addEventListener('click', () => {
   toggleSection('watchlist-section');
   displayWatchlist();
+});
+
+document.getElementById('badgesBtn').addEventListener('click', () => {
+  toggleSection('badges-section');
+  displayBadges();
 });
 
 document.getElementById('searchInput').addEventListener('input', (e) => {
@@ -192,23 +210,45 @@ async function showDetails(id, type) {
       <p><strong>⭐ ${movie.vote_average?.toFixed(1) || 'N/A'}/10</strong> | 📅 ${releaseDate}</p>
       <p style="margin:1.5rem 0; line-height:1.6;">${overview}</p>
       ${movie.genres ? `<p><strong>Genres:</strong> ${movie.genres.map(g => g.name).join(', ')}</p>` : ''}
-      <button id="addToWatchlist" style="margin-top:1.5rem; font-size:1rem;">
-        ${isInWatchlist ? '✅ Dans ma liste' : '➕ Ajouter à ma liste'}
-      </button>
+      
+      <div style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;">
+        <button id="addToWatchlist" style="font-size:1rem; flex:1; min-width:150px;">
+          ${isInWatchlist ? '✅ Dans ma liste' : '➕ Ajouter à ma liste'}
+        </button>
+        <button id="markWatched" style="font-size:1rem; flex:1; min-width:150px; background:linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+          ✅ Marquer comme vu
+        </button>
+      </div>
     `;
     
+    // Listener pour "Ajouter à ma liste"
     document.getElementById('addToWatchlist').addEventListener('click', () => {
+      const genreIds = movie.genres ? movie.genres.map(g => g.id) : [];
+      
       addToWatchlist({
         id: movie.id,
         title: title,
         poster: movie.poster_path,
         rating: movie.vote_average || 0,
-        type: type
+        type: type,
+        genres: genreIds
       });
       
       document.getElementById('addToWatchlist').textContent = '✅ Dans ma liste';
       document.getElementById('addToWatchlist').disabled = true;
     });
+    
+    // Listener pour "Marquer comme vu"
+    document.getElementById('markWatched').addEventListener('click', () => {
+      gamification.markAsWatched();
+      
+      const btn = document.getElementById('markWatched');
+      btn.textContent = '✅ Film vu !';
+      btn.disabled = true;
+      btn.style.opacity = '0.7';
+      btn.style.cursor = 'not-allowed';
+    });
+    
   } catch (error) {
     console.error('Erreur:', error);
     modalBody.innerHTML = '<p>❌ Erreur de chargement des détails</p>';
@@ -226,6 +266,10 @@ function addToWatchlist(movie) {
     });
     localStorage.setItem('watchlist', JSON.stringify(watchlist));
     updateWatchlistCount();
+    
+    // Enregistrer dans le système de gamification avec les genres
+    const genreIds = movie.genres || [];
+    gamification.addToWatchlist(movie.id, genreIds);
     
     if ('vibrate' in navigator) {
       navigator.vibrate(100);
@@ -251,7 +295,9 @@ function displayWatchlist() {
   
   container.innerHTML = '';
   
-  watchlist.reverse().forEach(movie => {
+  const reversedWatchlist = [...watchlist].reverse();
+  
+  reversedWatchlist.forEach(movie => {
     const card = document.createElement('div');
     card.className = 'movie-card';
     card.innerHTML = `
@@ -269,7 +315,16 @@ function displayWatchlist() {
 }
 
 function updateWatchlistCount() {
-  document.getElementById('watchlistCount').textContent = watchlist.length;
+  const watchlistCount = document.getElementById('watchlistCount');
+  if (watchlistCount) {
+    watchlistCount.textContent = watchlist.length;
+  }
+}
+
+// Afficher la page des badges
+function displayBadges() {
+  const container = document.getElementById('badgesContent');
+  container.innerHTML = gamification.renderBadgesPage();
 }
 
 window.removeFromWatchlist = removeFromWatchlist;
@@ -277,10 +332,13 @@ window.removeFromWatchlist = removeFromWatchlist;
 // Initialize
 fetchTrending();
 updateWatchlistCount();
+gamification.updateUI();
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').then(() => {
     console.log('✅ Service Worker registered');
+  }).catch((error) => {
+    console.log('Service Worker registration failed:', error);
   });
 }
 

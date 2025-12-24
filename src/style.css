@@ -256,3 +256,300 @@ section h2 {
   }
 }
 
+/* Gamification - Badges & Streaks */
+.badge-unlock-notification {
+  position: fixed;
+  top: 80px;
+  right: -400px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 1.5rem;
+  border-radius: 15px;
+  box-shadow: 0 10px 40px rgba(102, 126, 234, 0.5);
+  z-index: 10000;
+  max-width: 350px;
+  transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.badge-unlock-notification.show {
+  right: 20px;
+}
+
+.badge-unlock-content {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.badge-icon {
+  font-size: 3rem;
+  animation: bounce 0.6s ease-in-out;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.badge-info h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.badge-info p {
+  margin: 0.25rem 0;
+  color: rgba(255,255,255,0.9);
+}
+
+.badge-desc {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.7);
+}
+
+.streak-notification {
+  position: fixed;
+  bottom: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a2e;
+  padding: 1rem 2rem;
+  border-radius: 30px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+  z-index: 10000;
+  transition: bottom 0.3s ease;
+  font-weight: 600;
+}
+
+.streak-notification.show {
+  bottom: 20px;
+}
+
+.streak-notification.warning {
+  background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+}
+
+#streakDisplay {
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  background: rgba(255,255,255,0.1);
+  border-radius: 20px;
+  transition: all 0.3s;
+}
+
+#streakDisplay.hot-streak {
+  background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Page des badges */
+.badges-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.badges-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.badges-header h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 30px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 15px;
+  overflow: hidden;
+  margin: 1rem 0;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f5576c 100%);
+  transition: width 0.5s ease;
+  border-radius: 15px;
+}
+
+.progress-text {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
+}
+
+.streak-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.stat-card {
+  background: rgba(255,255,255,0.05);
+  padding: 1.5rem;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 2px solid rgba(255,255,255,0.1);
+  transition: transform 0.3s, border-color 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  border-color: #667eea;
+}
+
+.stat-icon {
+  font-size: 2.5rem;
+}
+
+.stat-content h3 {
+  font-size: 2rem;
+  margin: 0;
+  background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-content p {
+  margin: 0.25rem 0 0 0;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.9rem;
+}
+
+.badges-section {
+  margin-bottom: 3rem;
+}
+
+.badges-section h3 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.badge-card {
+  background: rgba(255,255,255,0.05);
+  padding: 1.5rem;
+  border-radius: 15px;
+  text-align: center;
+  border: 2px solid rgba(255,255,255,0.1);
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.badge-card.earned {
+  border-color: #667eea;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+}
+
+.badge-card.earned::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+  transform: rotate(45deg);
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.badge-card.locked {
+  opacity: 0.6;
+}
+
+.badge-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.badge-emoji {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.badge-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.badge-description {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+
+.badge-progress {
+  margin-top: 1rem;
+}
+
+.badge-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.badge-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.badge-progress-text {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.6);
+}
+
+.no-badges {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+  color: rgba(255,255,255,0.5);
+}
+
+@media (max-width: 768px) {
+  .badge-unlock-notification {
+    max-width: 300px;
+    padding: 1rem;
+  }
+
+  .badge-icon {
+    font-size: 2rem;
+  }
+
+  .badges-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+
+  .streak-info {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
