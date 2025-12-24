@@ -3,6 +3,7 @@ import { auth, loginWithGoogle, logout } from './firebase.js'
 import { onAuthStateChanged } from 'firebase/auth'
 import { GamificationManager } from './gamification.js'
 import { MoodMatcher } from './mood-matcher.js'
+import { NotificationManager } from './notifications.js'
 
 const API_KEY = '904812e78d331be964b64b4e270697ed';
 const BASE_URL = 'https://api.themoviedb.org/3';
@@ -18,6 +19,7 @@ let currentSort = 'recent';
 // Initialiser les systèmes
 const gamification = new GamificationManager();
 const moodMatcher = new MoodMatcher();
+const notificationManager = new NotificationManager();
 
 // PWA Install Prompt
 window.addEventListener('beforeinstallprompt', (e) => {
@@ -756,6 +758,188 @@ window.removeFromWatched = removeFromWatched;
 window.beginQuiz = beginQuiz;
 window.selectQuizOption = selectQuizOption;
 window.shareQuizResult = shareQuizResult;
+
+// Demander permission notifications après 10 secondes
+setTimeout(() => {
+  showNotificationPermissionBanner();
+}, 10000);
+
+// Vérifier les notifications planifiées toutes les heures
+setInterval(() => {
+  if (notificationManager.isEnabled()) {
+    notificationManager.checkScheduledNotifications();
+  }
+}, 60 * 60 * 1000); // Chaque heure
+
+// Analyser comportement au chargement
+if (notificationManager.isEnabled()) {
+  notificationManager.analyzeUserBehavior();
+}
+
+// Fonction pour afficher le banner de permission
+function showNotificationPermissionBanner() {
+  if (notificationManager.permission === 'granted' || 
+      notificationManager.permission === 'denied' ||
+      localStorage.getItem('notification_banner_dismissed')) {
+    return;
+  }
+  
+  const banner = document.createElement('div');
+  banner.className = 'notification-permission-banner';
+  banner.innerHTML = `
+    <h3>🔔 Restez informé !</h3>
+    <p>Activez les notifications pour recevoir des rappels, nouveautés et recommandations personnalisées.</p>
+    <div class="buttons">
+      <button onclick="enableNotifications()" style="background:linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+        ✅ Activer
+      </button>
+      <button onclick="dismissNotificationBanner()" class="dismiss-btn">
+        Plus tard
+      </button>
+    </div>
+  `;
+  
+  document.body.appendChild(banner);
+}
+
+async function enableNotifications() {
+  const granted = await notificationManager.requestPermission();
+  
+  if (granted) {
+    showQuickNotification('✅ Notifications activées avec succès !');
+    notificationManager.showWelcomeNotification();
+    document.querySelector('.notification-permission-banner')?.remove();
+  } else {
+    showQuickNotification('❌ Permission refusée. Activez-les dans les paramètres du navigateur.');
+  }
+}
+
+function dismissNotificationBanner() {
+  localStorage.setItem('notification_banner_dismissed', 'true');
+  document.querySelector('.notification-permission-banner')?.remove();
+}
+
+// Notification contextuelle basée sur l'heure
+function checkTimeBasedNotification() {
+  const hour = new Date().getHours();
+  const lastNotif = localStorage.getItem('last_time_notification');
+  const today = new Date().toDateString();
+  
+  if (lastNotif !== today && notificationManager.isEnabled()) {
+    if (hour === 20) { // 20h = heure du film
+      notificationManager.notifyTimeBasedRecommendation(hour);
+      localStorage.setItem('last_time_notification', today);
+    }
+  }
+}
+
+// Vérifier toutes les 30 minutes
+setInterval(checkTimeBasedNotification, 30 * 60 * 1000);
+
+// Notification badge débloqué (modifier dans gamification.js)
+function unlockBadge(badge) {
+  if (!badge || badge.earned || this.stats.earnedBadges.includes(badge.id)) return;
+  
+  badge.earned = true;
+  this.stats.earnedBadges.push(badge.id);
+  this.saveStats();
+  this.showBadgeUnlock(badge);
+  
+  // NOUVEAU: Notification push
+  if (window.notificationManager && window.notificationManager.isEnabled()) {
+    window.notificationManager.notifyBadgeUnlocked(badge);
+  }
+}
+
+// Afficher le panneau de gestion des notifications
+function showNotificationSettings() {
+  const panel = document.createElement('div');
+  panel.className = 'notification-panel';
+  panel.id = 'notificationPanel';
+  
+  const isEnabled = notificationManager.isEnabled();
+  const stats = notificationManager.getEngagementStats();
+  
+  panel.innerHTML = `
+    <h3>🔔 Notifications</h3>
+    
+    <div class="notification-toggle">
+      <span>Activer les notifications</span>
+      <div class="toggle-switch ${isEnabled ? 'active' : ''}" onclick="toggleNotifications()"></div>
+    </div>
+    
+    <div class="notification-types">
+      <div class="notification-type">
+        <span>📋 Rappels watchlist</span>
+        <input type="checkbox" checked>
+      </div>
+      <div class="notification-type">
+        <span>🔥 Rappels streak</span>
+        <input type="checkbox" checked>
+      </div>
+      <div class="notification-type">
+        <span>🎬 Nouveaux films</span>
+        <input type="checkbox" checked>
+      </div>
+      <div class="notification-type">
+        <span>🏆 Badges débloqués</span>
+        <input type="checkbox" checked>
+      </div>
+      <div class="notification-type">
+        <span>🎭 Recommandations</span>
+        <input type="checkbox" checked>
+      </div>
+    </div>
+    
+    <div class="notification-stats">
+      <p><strong>📊 Statistiques</strong></p>
+      <p>Total reçues : ${stats.total}</p>
+      <p>Cette semaine : ${stats.lastSevenDays}</p>
+    </div>
+    
+    <button onclick="closeNotificationPanel()" style="width:100%; margin-top:1rem;">
+      Fermer
+    </button>
+  `;
+  
+  document.body.appendChild(panel);
+  
+  // Fermer si clic en dehors
+  setTimeout(() => {
+    document.addEventListener('click', function closePanel(e) {
+      if (!panel.contains(e.target) && !e.target.closest('#notificationSettingsBtn')) {
+        closeNotificationPanel();
+        document.removeEventListener('click', closePanel);
+      }
+    });
+  }, 100);
+}
+
+function toggleNotifications() {
+  if (notificationManager.isEnabled()) {
+    notificationManager.disableNotifications();
+    showQuickNotification('🔕 Notifications désactivées');
+  } else {
+    enableNotifications();
+  }
+  
+  const toggle = document.querySelector('.toggle-switch');
+  if (toggle) {
+    toggle.classList.toggle('active');
+  }
+}
+
+function closeNotificationPanel() {
+  document.getElementById('notificationPanel')?.remove();
+}
+
+// Exposer globalement
+window.notificationManager = notificationManager;
+window.enableNotifications = enableNotifications;
+window.dismissNotificationBanner = dismissNotificationBanner;
+window.showNotificationSettings = showNotificationSettings;
+window.toggleNotifications = toggleNotifications;
+window.closeNotificationPanel = closeNotificationPanel;
 
 // Initialize
 fetchTrending();
